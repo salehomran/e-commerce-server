@@ -15,12 +15,13 @@ export const createCheckoutSessionHosted = async (req: Request, res: Response) =
     },
     quantity: item.quantity,
   }));
+
   const session = await stripe.checkout.sessions.create({
     line_items: line_items,
     mode: "payment",
     success_url: `http://localhost:5173/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `http://localhost:5173/checkout`,
-    client_reference_id: id,
+    client_reference_id: id?.toString(),
   });
   res.json({
     checkout_url: session.url,
