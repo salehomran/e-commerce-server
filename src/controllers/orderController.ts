@@ -122,7 +122,9 @@ const formatOrderDetails = (rows: IOrder[]) => ({
 });
 
 export const createOrder = async (req: Request, res: Response) => {
-  const { customer_id, payment_status, payment_id, order_status }: IOrder = req.body;
+  const { customer_id, payment_status, payment_id, order_status, order_items }: IOrder = req.body;
+  console.log("order_items", order_items);
+  console.log("req.body", req.body);
   
   try {
     const sql = `
@@ -130,8 +132,9 @@ export const createOrder = async (req: Request, res: Response) => {
       VALUES (?, ?, ?, ?, ?)
     `;
 
-    const totalPrice = req.body.order_items.reduce((total: number, item: IOrderItem) => total + (item.quantity * item.unit_price), 0);
+    const totalPrice = order_items.reduce((total: number, item: IOrderItem) => total + (item.quantity * item.unit_price), 0);
     const params = [customer_id, totalPrice, payment_status, payment_id, order_status]
+    console.log("params", params);
     const [result] = await db.query<ResultSetHeader>(sql, params)
     if (result.insertId) {
       const order_id: number = result.insertId;
